@@ -1,0 +1,461 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+:root {
+  font-family: 'Outfit', sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: dark;
+  color: #f8fafc;
+
+  /* Theme variables */
+  --bg-gradient: radial-gradient(circle at 0% 0%, #1e1b4b 0%, #0f172a 50%, #020617 100%);
+  --glass-bg: rgba(15, 23, 42, 0.45);
+  --glass-bg-hover: rgba(30, 41, 59, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-border-focus: rgba(99, 102, 241, 0.4);
+  
+  /* Palette */
+  --color-primary: #6366f1; /* Indigo */
+  --color-primary-hover: #4f46e5;
+  --color-primary-glow: rgba(99, 102, 241, 0.35);
+  
+  --color-accent: #a855f7; /* Purple */
+  --color-accent-hover: #9333ea;
+  --color-accent-glow: rgba(168, 85, 247, 0.35);
+
+  --color-danger: #ef4444; /* Red */
+  --color-danger-hover: #dc2626;
+  --color-danger-glow: rgba(239, 68, 68, 0.3);
+
+  --color-text: #f8fafc;
+  --color-text-muted: #94a3b8;
+  --color-text-dim: #64748b;
+  
+  /* Dimensions */
+  --radius-lg: 24px;
+  --radius-md: 16px;
+  --radius-sm: 8px;
+  --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-bounce: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  background: var(--bg-gradient);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-x: hidden;
+  padding: 20px;
+}
+
+#root {
+  width: 100%;
+  max-width: 900px;
+  display: flex;
+  justify-content: center;
+}
+
+/* App Container Layout */
+.app-container {
+  display: flex;
+  flex-direction: row;
+  gap: 24px;
+  width: 100%;
+  justify-content: center;
+  align-items: stretch;
+  perspective: 1000px;
+}
+
+/* Base Glassmorphism Panel */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3),
+              inset 0 1px 1px rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-lg);
+  transition: var(--transition-smooth);
+}
+
+.glass-panel:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4),
+              inset 0 1px 1px rgba(255, 255, 255, 0.07);
+}
+
+/* Main Calculator Structure */
+.calculator {
+  flex: 1.2;
+  max-width: 420px;
+  min-width: 320px;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  gap: 20px;
+}
+
+/* Calculator Display Screen */
+.display-screen {
+  background: rgba(2, 6, 23, 0.4);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+  min-height: 120px;
+  text-align: right;
+  overflow: hidden;
+  position: relative;
+  transition: var(--transition-smooth);
+}
+
+.display-screen:focus-within,
+.display-screen.active {
+  border-color: var(--glass-border-focus);
+  box-shadow: 0 0 15px var(--color-primary-glow);
+}
+
+.expression-line {
+  color: var(--color-text-muted);
+  font-size: 1.1rem;
+  min-height: 1.5rem;
+  word-break: break-all;
+  width: 100%;
+  font-family: 'JetBrains Mono', monospace;
+  opacity: 0.8;
+}
+
+.value-line {
+  color: var(--color-text);
+  font-size: 2.2rem;
+  font-weight: 600;
+  word-break: break-all;
+  width: 100%;
+  font-family: 'JetBrains Mono', monospace;
+  line-height: 1.2;
+  margin-top: 10px;
+}
+
+.loading-indicator {
+  position: absolute;
+  left: 15px;
+  top: 15px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+  box-shadow: 0 0 8px var(--color-primary);
+  animation: pulse 1.5s infinite;
+}
+
+.error-message {
+  color: #fda4af;
+  font-size: 0.9rem;
+  width: 100%;
+  text-align: left;
+  border-top: 1px solid rgba(239, 68, 68, 0.2);
+  padding-top: 8px;
+  margin-top: 8px;
+  font-weight: 500;
+}
+
+/* Keypad Grid */
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+/* Buttons Styling */
+.calc-btn {
+  border: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--color-text);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  font-size: 1.25rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: var(--transition-bounce);
+  position: relative;
+  overflow: hidden;
+  user-select: none;
+  font-family: 'Outfit', sans-serif;
+  height: 60px;
+}
+
+.calc-btn::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100px;
+  height: 100px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  transition: transform 0.5s ease, opacity 0.5s ease;
+}
+
+.calc-btn:active::after {
+  transform: translate(-50%, -50%) scale(1.5);
+  opacity: 1;
+  transition: 0s;
+}
+
+.calc-btn:hover {
+  background: var(--glass-bg-hover);
+  border-color: rgba(255, 255, 255, 0.18);
+  transform: translateY(-2px);
+}
+
+.calc-btn:active, .calc-btn.pressed {
+  transform: translateY(1px) scale(0.96);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Button Classes */
+.calc-btn.operator {
+  color: #c084fc;
+  font-weight: 600;
+  font-size: 1.4rem;
+  border-color: rgba(168, 85, 247, 0.25);
+  background: rgba(168, 85, 247, 0.06);
+}
+
+.calc-btn.operator:hover {
+  background: rgba(168, 85, 247, 0.12);
+  border-color: rgba(168, 85, 247, 0.4);
+  box-shadow: 0 0 10px var(--color-accent-glow);
+}
+
+.calc-btn.equals {
+  grid-column: span 2;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+  border: none;
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: white;
+  box-shadow: 0 4px 15px var(--color-primary-glow);
+}
+
+.calc-btn.equals:hover {
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
+  filter: brightness(1.1);
+}
+
+.calc-btn.equals:active {
+  filter: brightness(0.95);
+}
+
+.calc-btn.danger {
+  color: #fca5a5;
+  background: rgba(239, 68, 68, 0.06);
+  border-color: rgba(239, 68, 68, 0.2);
+}
+
+.calc-btn.danger:hover {
+  background: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.4);
+  box-shadow: 0 0 10px var(--color-danger-glow);
+}
+
+/* History Panel */
+.history-panel {
+  flex: 0.8;
+  max-width: 380px;
+  min-width: 260px;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  gap: 16px;
+  height: auto;
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--glass-border);
+  padding-bottom: 12px;
+}
+
+.history-header h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.clear-history-btn {
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: var(--transition-smooth);
+}
+
+.clear-history-btn:hover:not(:disabled) {
+  color: #fca5a5;
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.clear-history-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+  max-height: 380px;
+  padding-right: 4px;
+}
+
+/* Custom Scrollbar for History */
+.history-list::-webkit-scrollbar {
+  width: 5px;
+}
+
+.history-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.history-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.history-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.history-item {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  cursor: pointer;
+  text-align: right;
+  transition: var(--transition-bounce);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.history-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(99, 102, 241, 0.25);
+  transform: scale(1.02);
+}
+
+.history-item-exp {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  font-family: 'JetBrains Mono', monospace;
+  word-break: break-all;
+}
+
+.history-item-val {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.empty-history {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--color-text-dim);
+  font-size: 0.95rem;
+  gap: 8px;
+}
+
+/* Animations */
+@keyframes pulse {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.9);
+    opacity: 0.6;
+  }
+}
+
+/* Responsive Media Queries */
+@media (max-width: 768px) {
+  body {
+    padding: 12px;
+    align-items: flex-start;
+  }
+
+  .app-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .calculator {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .history-panel {
+    width: 100%;
+    max-width: 100%;
+    min-width: 100%;
+    height: auto;
+  }
+
+  .history-list {
+    max-height: 250px;
+  }
+}
+
+@media (max-width: 360px) {
+  .calc-btn {
+    padding: 12px;
+    font-size: 1.1rem;
+    height: 52px;
+  }
+  
+  .value-line {
+    font-size: 1.8rem;
+  }
+}
