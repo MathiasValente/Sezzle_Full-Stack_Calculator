@@ -48,6 +48,7 @@ Here is a quick overview of the premium user interface in action, executing calc
 │
 ├── specs/                    # Specification documents (API, design, layout)
 ├── docker-compose.yml        # Orchestration configuration
+├── run.bat                   # Quick start Windows batch script
 └── README.md                 # Project user manual (This file)
 ```
 
